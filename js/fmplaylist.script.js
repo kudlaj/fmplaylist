@@ -162,6 +162,8 @@ function playlistInfo()	{
 	$('#resultList').append(imgHtml);
 	$('#resultList').append(tagsHtml);
 	
+	//genres
+	var genresHash = new Hash();
 	$.each(pList,function(index,value) {
 		id = pList[index].id ;
 		id = id.replace(":", "");
@@ -169,10 +171,25 @@ function playlistInfo()	{
 		if(track.cover&&track.cover!="")	{
 			imgHtml = "<img src='"+track.cover+"' width='100'/>"
 			$('#imgPlaylist').append(imgHtml);
-			$('#tagsPlaylist').append(getTrackGenreHtml(track));
+			addGenreToHash(track, genresHash);
 		}
 	});
+	$('#tagsPlaylist').append("<p>");
+	for (var i in genresHash.items) {
+		genreObj = genresHash.items[i].genreObject;
+		genre = "<span name='genres' onClick='searchTag(this)' size='" + genresHash.items[i].size + "'  title='click to lookup the genre " + genreObj.name + "' alt='click to lookup the genre " + genreObj.name + "'> " + genreObj.name + "</span>";
+		$('#tagsPlaylist').append(genre);
+	}
 	
+	$("span[name='genres'][size]").each(function(index, genreObj) {
+		
+	});
+	
+}
+
+function Genre(_genreObject)	{
+	this.genreObject = _genreObject;
+	this.size = 1;
 }
 
 function getTrackGenreHtml(track)	{
@@ -182,6 +199,25 @@ function getTrackGenreHtml(track)	{
 	});
 	return genre;
 }
+
+function addGenreToHash(track, genresHash)	{
+	var IDENTIFIER = "KEY";
+	var genre = {};
+	$.each(track.genreArray, function(index, genreObj) {
+		if(genresHash.hasItem(IDENTIFIER+genreObj.name))	{
+			genre = genresHash.getItem(IDENTIFIER+genreObj.name);
+			genre.size = genre.size+1;
+			genresHash.setItem(IDENTIFIER+genreObj.name, genre);
+		}	else	{
+			genre = new Genre(genreObj);
+			genresHash.setItem(IDENTIFIER+genreObj.name, genre);
+		}
+	});
+	return genresHash;
+}
+
+
+
 
 /**
  * searchAction
@@ -279,8 +315,6 @@ function getMore(elem) {
 	var img = "<div id='loading'><img src='img/loading.gif' hspace='150' vspace='0'/></div>";
 	$('ul#resultList div#more[cloudId="'+cloudId+'"]').before(img);
 	
-	var ajax;
-	var params = {};
 	searchModule.searchMore(cloudId, {searchClouds: [cloudId]}, appendTracks);
 }
 
