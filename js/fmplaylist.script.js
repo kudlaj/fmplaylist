@@ -181,25 +181,43 @@ function playlistInfo()	{
 		$('#tagsPlaylist').append(genre);
 	}
 	
+	//formats the tags respect the number of apearance (defined by the attribute size)
 	$("span[name='genres'][size]").each(function(index, genreObj) {
-		
+		var size = $(this).attr("size");
+		var percent = parseInt(size) * 10;
+		var weight = parseInt(size) * 10;
+		var padding = parseInt(size) * 3;
+		if(padding>20) 	{
+			padding = 20;
+		}
+		if (percent<100)	{
+			percent = 100 + percent;
+			weight = weight*2 + "0";
+		}	else	{
+			percent = 220;
+			weight =  "900";
+		}
+		$(this).css("font-size", percent +"%");
+		$(this).css("font-weight", weight);
+		$(this).css("padding", padding);
 	});
 	
 }
-
+//the Genre object 
 function Genre(_genreObject)	{
 	this.genreObject = _genreObject;
 	this.size = 1;
 }
 
-function getTrackGenreHtml(track)	{
-	var genre = "";
-	$.each(track.genreArray, function(index, genreObj) {
-		 genre += "<span name='genres' onClick='searchTag(this)' cloudId='"+track.cloudId+"' id='" + genreObj.id + "' title='click to lookup the genre " + genreObj.name + "' alt='click to lookup the genre " + genreObj.name + "'> " + genreObj.name + "</span>";
-	});
-	return genre;
-}
 
+/**
+ * adds the genre tags to a hashmap
+ * to avoid duplicate the tags
+ * and to format them late by number of apearance (stored in the attr. size)
+ * @param track
+ * @param genresHash
+ * @returns
+ */
 function addGenreToHash(track, genresHash)	{
 	var IDENTIFIER = "KEY";
 	var genre = {};
@@ -216,7 +234,13 @@ function addGenreToHash(track, genresHash)	{
 	return genresHash;
 }
 
-
+function getTrackGenreHtml(track)	{
+	var genre = "";
+	$.each(track.genreArray, function(index, genreObj) {
+		 genre += "<span name='genres' onClick='searchTag(this)' cloudId='"+track.cloudId+"' id='" + genreObj.id + "' title='click to lookup the genre " + genreObj.name + "' alt='click to lookup the genre " + genreObj.name + "'> " + genreObj.name + "</span>";
+	});
+	return genre;
+}
 
 
 /**
