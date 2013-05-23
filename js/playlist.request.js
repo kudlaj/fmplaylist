@@ -67,6 +67,7 @@ var playListRequest = (function ($, window, document, undefined) {
 			});
 	    });
 	    $("#exportar").show();
+	    $("#buttonPlaylistInfoDiv").show();
 	 };
 	
 	return {

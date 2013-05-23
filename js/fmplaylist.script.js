@@ -155,12 +155,17 @@ jQuery(document).ready(function() {
  * displays tags and images of the playlist
  */
 function playlistInfo()	{
+	$('#playlistInfo').empty();
 	var imgHtml = "<div id='imgPlaylist'></div>";
 	var tagsHtml = "<div id='tagsPlaylist'></div>";
 	var pList = playerPlaylist.getPlaylist();
 	
-	$('#resultList').append(imgHtml);
-	$('#resultList').append(tagsHtml);
+	$('#playlistInfo').append("<div style='font-weight:bold;cursor:pointer;'><span onClick='hidePlaylistInfo()'>[ close playlist info]</span></div>");
+	$('#playlistInfo').append("<h1>Playlist Info</h1>");
+	$('#playlistInfo').append(imgHtml);
+	$('#playlistInfo').append(tagsHtml);
+	
+	$('#playlistInfo').show();
 	
 	//genres
 	var genresHash = new Hash();
@@ -202,6 +207,10 @@ function playlistInfo()	{
 		$(this).css("padding", padding);
 	});
 	
+}
+
+function hidePlaylistInfo()	{
+	$('#playlistInfo').hide();
 }
 //the Genre object 
 function Genre(_genreObject)	{
@@ -581,6 +590,7 @@ function setAlbumCover(error, data) {
  */
 function addPlayList(id, cloudId){
 	$("#exportar").show();
+	$("#buttonPlaylistInfoDiv").show();
 	playerPlaylist.add({
 		id:cloudId +":"+ id,
 		title:trackList[cloudId + id].getTitle(),

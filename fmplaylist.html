@@ -82,7 +82,7 @@ window.SESSION_COOKIE_NAME = 'ID';
 	li[name="genres"] span, span[name="genres"]	{
 		padding:3px;
 		margin-right:5px;
-		background-color: #D3D3D3;
+		background-color: #8F8F8F;
 		-moz-border-radius:    3px;
 	   	-webkit-border-radius: 3px;
 	   	border-radius:         3px;
@@ -216,7 +216,7 @@ window.SESSION_COOKIE_NAME = 'ID';
 		display: none;
 	}
 	
-	#exportPlaylist	{
+	#exportPlaylist, #buttonPlaylistInfo	{
 		display:block;
 		width: 220px;
 		cursor: pointer;
@@ -335,7 +335,7 @@ window.SESSION_COOKIE_NAME = 'ID';
     	text-align: right;
     	cursor: pointer;
 	}
-	div#exportar	{
+	div#exportar, div#buttonPlaylistInfoDiv	{
 		margin-bottom: 15px;
 		margin-left: 5px;
 		
@@ -384,6 +384,19 @@ window.SESSION_COOKIE_NAME = 'ID';
 	   	-webkit-border-radius: 10px;
 	   	border-radius:         10px;
 	   	margin-bottom: 		20px;
+	   	width: 530px;
+	}
+	
+	div#playlistInfo	{
+		padding:10px;
+		padding-bottom:30px;
+		background-color: #D3D3D3;
+		-moz-border-radius:    10px;
+	   	-webkit-border-radius: 10px;
+	   	border-radius:         10px;
+	   	margin-bottom: 		20px;
+	   	margin-top: 		10px;
+	   	width: 530px;
 	}
 	
 	img#iconInfo 	{
@@ -410,6 +423,9 @@ window.SESSION_COOKIE_NAME = 'ID';
 <div id="playListColum">
 &nbsp;
 <div id="songInfo">&nbsp;</div>
+<div id="buttonPlaylistInfoDiv" style="display: none;margin-bottom: 5px;">
+	<span id="buttonPlaylistInfo" onClick="playlistInfo()">show / refresh Playlist Info</span>
+</div>
 <div id="exportar" style="display: none;">
 	<span id="exportPlaylist" >share Playlist</span>
 </div>
@@ -458,6 +474,7 @@ window.SESSION_COOKIE_NAME = 'ID';
 </div>
 
 <div id="resultColum">
+<div id="playlistInfo" style="display: none;"></div>
 <div id="result">
 	<ul id="resultList">
 		<li>no results</li>
