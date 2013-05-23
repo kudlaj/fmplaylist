@@ -24,7 +24,15 @@ function Hash()
 	this.getItem = function(in_key) {
 		return this.items[in_key];
 	}
-
+	
+	this.getItems = function() {
+		var arr = [];
+		for (var i in this.items) {
+			arr.push(this.items[i]);
+		}
+		return arr;
+	}
+	
 	this.setItem = function(in_key, in_value)
 	{
 		var tmp_previous;

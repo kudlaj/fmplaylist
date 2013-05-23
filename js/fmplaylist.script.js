@@ -169,22 +169,34 @@ function playlistInfo()	{
 	
 	//genres
 	var genresHash = new Hash();
+	//artists
+	var artistHash = new Hash();
+	//images
+	var imgHash = new Hash();
 	$.each(pList,function(index,value) {
 		id = pList[index].id ;
 		id = id.replace(":", "");
 		track = trackList[id];
-		if(track.cover&&track.cover!="")	{
+		addGenreToHash(track, genresHash);
+		addArtistToHash(track, artistHash);	
+		if(track.cover && track.cover!="" && !imgHash.hasItem(track.cover))	{
+			imgHash.setItem(track.cover, track.cover);
 			imgHtml = "<img src='"+track.cover+"' width='100'/>"
 			$('#imgPlaylist').append(imgHtml);
-			addGenreToHash(track, genresHash);
 		}
 	});
 	$('#tagsPlaylist').append("<p>");
-	for (var i in genresHash.items) {
-		genreObj = genresHash.items[i].genreObject;
-		genre = "<span name='genres' onClick='searchTag(this)' size='" + genresHash.items[i].size + "'  title='click to lookup the genre " + genreObj.name + "' alt='click to lookup the genre " + genreObj.name + "'> " + genreObj.name + "</span>";
+
+	var arrGenres = genresHash.getItems();
+	arrGenres.sort(sortBySize);
+	$.each(arrGenres,function(index,value) {
+		genreObj = value.genreObject;
+		genre = "<span name='genres' onClick='searchTag(this)' size='" + value.size + "'  title='click to lookup the genre " + genreObj.name + "' alt='click to lookup the genre " + genreObj.name + "'> " + genreObj.name + "</span>";
 		$('#tagsPlaylist').append(genre);
-	}
+	});
+	
+	var arrArtistas = artistHash.getItems();
+	arrArtistas.sort(sortBySize);
 	
 	//formats the tags respect the number of apearance (defined by the attribute size)
 	$("span[name='genres'][size]").each(function(index, genreObj) {
@@ -209,6 +221,11 @@ function playlistInfo()	{
 	
 }
 
+function sortBySize( a, b ) {
+    return b.size - a.size;
+}
+
+
 function hidePlaylistInfo()	{
 	$('#playlistInfo').hide();
 }
@@ -217,12 +234,17 @@ function Genre(_genreObject)	{
 	this.genreObject = _genreObject;
 	this.size = 1;
 }
-
+//the Artist object 
+function ArtistObject(_artistName)	{
+	this.artistName = _artistName;
+	this.size = 1;
+}
 
 /**
  * adds the genre tags to a hashmap
  * to avoid duplicate the tags
  * and to format them late by number of apearance (stored in the attr. size)
+ * IDENTIFIER used because genrename "pop" as key dosn't work 
  * @param track
  * @param genresHash
  * @returns
@@ -250,6 +272,22 @@ function getTrackGenreHtml(track)	{
 	});
 	return genre;
 }
+
+function addArtistToHash(track, artistHash)	{
+	var artistObj = {};
+	var artist = track.getBand();
+		if(artistHash.hasItem(artist))	{
+			artistObj = artistHash.getItem(artist);
+			artistObj.size = artistObj.size+1;
+			artistHash.setItem(artist, artistObj);
+		}	else	{
+			artistObj = new ArtistObject(artist);
+			artistHash.setItem(artist, artistObj);
+		}
+	
+	return artistHash;
+}
+
 
 
 /**
