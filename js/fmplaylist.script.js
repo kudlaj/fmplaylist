@@ -348,13 +348,19 @@ function searchAction()	{
 function getTopTracks()	{
 	var searchClouds = [];
 	var numClouds = 0;
-	$("input[name='sites']").each(function () {
+	$("input[name='sites']:checked").each(function () {
 		searchClouds.push( $(this).val());
+		numClouds++;
 	});
+	
+	page = 1;
+	per_page = 20;
+	per_page = Math.round(per_page/numClouds);
+	var searchBy = null;
 	if($("input[name='searchOptionsOrderJamendo']:checked").val())	{
 		jamendoParams.setParams({order:$("input[name='searchOptionsOrderJamendo']:checked").val()});
 	}	else	{
-		jamendoParams.setParams({order:'popularity_week'});
+		jamendoParams.setParams({order:'listens_week'});
 	}
 	if($("input[name='searchOptionsOrderSC']:checked").val())	{
 		soundCloudParams.setParams({order:$("input[name='searchOptionsOrderSC']:checked").val()});
@@ -373,8 +379,8 @@ function getTopTracks()	{
 	//call the search module
 	searchModule.search({
 		searchVal:'', 
-		perPage:10, 
-		page:1, 
+		perPage:per_page, 
+		page:page, 
 		searchClouds: searchClouds, 
 		searchBy: null
 		}, appendTracks);
