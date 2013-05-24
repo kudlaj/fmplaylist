@@ -130,6 +130,7 @@ jQuery(document).ready(function() {
 	if(playlist!=undefined&& playlist!="")	{
 		var songs = playlist.split(",");
 		$('#resultList').empty();
+		//calls playListRequest module
 		playListRequest.getUrlParams(songs, trackList, playerPlaylist, playlistInfo);
 	}	else	{
 		//at the beginning we load the top tracks of every cloudservice
@@ -150,121 +151,37 @@ jQuery(document).ready(function() {
 
 });
 
+
+
 /**
  * playlistInfo
  * displays tags and images of the playlist
+ * uses module playListInfo (playlist.info.js)
  */
 function playlistInfo()	{
-	$('#playlistInfo').empty();
-	var imgHtml = "<div id='imgPlaylist'></div>";
-	var tagsHtml = "<div id='tagsPlaylist'></div>";
 	var pList = playerPlaylist.getPlaylist();
-	
-	$('#playlistInfo').append("<div style='font-weight:bold;cursor:pointer;'><span onClick='hidePlaylistInfo()'>[ close playlist info]</span></div>");
-	$('#playlistInfo').append("<h1>Playlist Info</h1>");
-	$('#playlistInfo').append(imgHtml);
-	$('#playlistInfo').append(tagsHtml);
-	
-	$('#playlistInfo').show();
-	
-	//genres
-	var genresHash = new Hash();
-	//artists
-	var artistHash = new Hash();
-	//images
-	var imgHash = new Hash();
-	$.each(pList,function(index,value) {
-		id = pList[index].id ;
-		id = id.replace(":", "");
-		track = trackList[id];
-		addGenreToHash(track, genresHash);
-		addArtistToHash(track, artistHash);	
-		if(track.cover && track.cover!="" && !imgHash.hasItem(track.cover))	{
-			imgHash.setItem(track.cover, track.cover);
-			imgHtml = "<img src='"+track.cover+"' width='100'/>"
-			$('#imgPlaylist').append(imgHtml);
-		}
-	});
-	$('#tagsPlaylist').append("<p>");
-
-	var arrGenres = genresHash.getItems();
-	arrGenres.sort(sortBySize);
-	$.each(arrGenres,function(index,value) {
-		genreObj = value.genreObject;
-		genre = "<span name='genres' onClick='searchTag(this)' size='" + value.size + "'  title='click to lookup the genre " + genreObj.name + "' alt='click to lookup the genre " + genreObj.name + "'> " + genreObj.name + "</span>";
-		$('#tagsPlaylist').append(genre);
-	});
-	
-	var arrArtistas = artistHash.getItems();
-	arrArtistas.sort(sortBySize);
-	
-	//formats the tags respect the number of apearance (defined by the attribute size)
-	$("span[name='genres'][size]").each(function(index, genreObj) {
-		var size = $(this).attr("size");
-		var percent = parseInt(size) * 10;
-		var weight = parseInt(size) * 10;
-		var padding = parseInt(size) * 3;
-		if(padding>20) 	{
-			padding = 20;
-		}
-		if (percent<100)	{
-			percent = 100 + percent;
-			weight = weight*2 + "0";
-		}	else	{
-			percent = 220;
-			weight =  "900";
-		}
-		$(this).css("font-size", percent +"%");
-		$(this).css("font-weight", weight);
-		$(this).css("padding", padding);
-	});
-	
-}
-
-function sortBySize( a, b ) {
-    return b.size - a.size;
-}
-
-
-function hidePlaylistInfo()	{
-	$('#playlistInfo').hide();
-}
-//the Genre object 
-function Genre(_genreObject)	{
-	this.genreObject = _genreObject;
-	this.size = 1;
-}
-//the Artist object 
-function ArtistObject(_artistName)	{
-	this.artistName = _artistName;
-	this.size = 1;
+	playListInfo.showInfo ($('#playlistInfo'), pList);
 }
 
 /**
- * adds the genre tags to a hashmap
- * to avoid duplicate the tags
- * and to format them late by number of apearance (stored in the attr. size)
- * IDENTIFIER used because genrename "pop" as key dosn't work 
- * @param track
- * @param genresHash
- * @returns
+ * playlistInfo
+ * displays tags and images of the playlist and searches for more songs 
+ * from the artists of the playlist
+ * uses module playListInfo (playlist.info.js)
  */
-function addGenreToHash(track, genresHash)	{
-	var IDENTIFIER = "KEY";
-	var genre = {};
-	$.each(track.genreArray, function(index, genreObj) {
-		if(genresHash.hasItem(IDENTIFIER+genreObj.name))	{
-			genre = genresHash.getItem(IDENTIFIER+genreObj.name);
-			genre.size = genre.size+1;
-			genresHash.setItem(IDENTIFIER+genreObj.name, genre);
-		}	else	{
-			genre = new Genre(genreObj);
-			genresHash.setItem(IDENTIFIER+genreObj.name, genre);
-		}
-	});
-	return genresHash;
+function playlistInfoArtists()	{
+	var pList = playerPlaylist.getPlaylist();
+	playListInfo.showInfo ($('#playlistInfo'), pList);
+	playListInfo.getPlaylistArtists();
 }
 
+function hidePlaylistInfo()	{
+	playListInfo.hideInfo ($('#playlistInfo'));
+}
+
+/**
+ * genrates the HTML code for the tag
+ */
 function getTrackGenreHtml(track)	{
 	var genre = "";
 	$.each(track.genreArray, function(index, genreObj) {
@@ -272,23 +189,6 @@ function getTrackGenreHtml(track)	{
 	});
 	return genre;
 }
-
-function addArtistToHash(track, artistHash)	{
-	var artistObj = {};
-	var artist = track.getBand();
-		if(artistHash.hasItem(artist))	{
-			artistObj = artistHash.getItem(artist);
-			artistObj.size = artistObj.size+1;
-			artistHash.setItem(artist, artistObj);
-		}	else	{
-			artistObj = new ArtistObject(artist);
-			artistHash.setItem(artist, artistObj);
-		}
-	
-	return artistHash;
-}
-
-
 
 /**
  * searchAction

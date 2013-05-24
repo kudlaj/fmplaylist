@@ -1,3 +1,9 @@
+/*
+ * Module to get the song ids for the playlist from the URL.
+ * Reads the song ids and the cloud ids from the URL and gets the songs from the cloud
+ * Adds the songs to jplayerPlaylist
+ * 
+ */
 var playListRequest = (function ($, window, document, undefined) {
 	var jqXHR;
 	var trackList;
