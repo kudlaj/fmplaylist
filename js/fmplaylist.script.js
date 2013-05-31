@@ -10,7 +10,7 @@
  * Date: 6st may 2013
  */
 
-var host = "http://www.freakfandango.es";
+var host = "http://kudlaj.github.io";
 var page = 1;
 var per_page = 20;
 
