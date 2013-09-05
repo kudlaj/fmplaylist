@@ -15,6 +15,7 @@ var page = 1;
 var per_page = 20;
 
 
+
 /**
  * Method to get the params from the URL
  */
